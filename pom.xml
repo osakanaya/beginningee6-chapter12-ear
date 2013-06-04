@@ -1,0 +1,134 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.beginningee6.book</groupId>
+	<artifactId>beginningee6-chapter12-ear</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>ear</packaging>
+
+	<name>beginningee6-chapter12-ear</name>
+
+	<!-- 
+		コンパイルされるソースコードのエンコーディング形式の前提として
+		UTF-8を設定する
+	 -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<build>
+		<plugins>
+			<!-- 
+				maven-ear-plugin
+				
+				MavenでEARパッケージの生成を実行するために
+				必要なプラグイン。
+			 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ear-plugin</artifactId>
+				<version>2.8</version>
+				<!-- 
+					EARパッケージの生成方法に関する設定を行う。
+				 -->
+				<configuration>
+					<!-- JavaEE6に準拠したEARパッケージの生成を行うように指定 -->
+					<version>6</version>
+					<!-- 
+						EARパッケージのデプロイメント記述子：application.xml
+						を自動生成するように指示 
+					-->
+					<generateApplicationXml>true</generateApplicationXml>
+					<!-- 
+						application.xmlのdisplay-nameタグに設定する値を設定
+					 -->
+					<displayName>Chapter12 - EAR Application Example</displayName>
+					<!-- 
+						EARパッケージのライブラリフォルダを指定。
+						
+						application.xmlではlibrary-directoryタグにこの値が
+						設定される。パッケージングにおいては、このMaven
+						プロジェクトが依存するJAR/WARファイルのうち、
+						webModule/ejbModuleタグによりEJBやWebアプリケーション
+						として指定されたライブラリ以外のものがここで指定する
+						フォルダに配置される。
+					 -->
+					<defaultLibBundleDir>lib</defaultLibBundleDir>
+					<modules>
+						<!-- 
+							EARパッケージの中でWebアプリケーションとして
+							動作させるライブラリを明示的に設定する
+						 -->
+						<webModule>
+							<groupId>org.beginningee6.book</groupId>
+							<artifactId>beginningee6-chapter12-jsf</artifactId>
+							<!-- 
+								Webアプリケーションのコンテキストルートを
+								明示的に設定する。
+							-->
+							<contextRoot>/sample-jsf</contextRoot>
+						</webModule>
+						<!-- 
+							EARパッケージの中でEJBとして動作させる
+							ライブラリを明示的に設定する
+						 -->
+						<ejbModule>
+							<groupId>org.beginningee6.book</groupId>
+							<artifactId>beginningee6-chapter10-ejb</artifactId>
+						</ejbModule>
+					</modules>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<!-- 
+		EARパッケージに含めるJAR/WARパッケージを依存関係として設定する。
+		
+		ここでは、以下のものを依存関係として設定している。
+		
+		①Webアプリケーション
+			：beginningee6-chapter12-jsf
+		②JPA/EJBライブラリのエイリアス
+			：beginningee6-chapter10-ear-lib
+		③EJBライブラリ
+		　　：beginningee6-chapter10-ejb
+		
+		②は暗黙的にEJBライブラリを含むため、③の指定は冗長に思えるかもしれないが、
+		maven-ear-pluginでejbModuleによりEJBとして動作させるライブラリを
+		指定する箇所でこのEJBライブラリを指定していることから、対応する形で
+		ここでも依存関係を明示的に指定しておく必要がある。
+	 -->
+	<dependencies>
+		<!-- Webアプリケーション -->
+		<dependency>
+			<groupId>org.beginningee6.book</groupId>
+			<artifactId>beginningee6-chapter12-jsf</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>war</type>
+		</dependency>
+		<!-- JPA/EJBライブラリのエイリアス -->
+		<dependency>
+			<groupId>org.beginningee6.book</groupId>
+			<artifactId>beginningee6-chapter10-ear-lib</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>pom</type>
+		</dependency>
+		<!-- EJBライブラリ -->
+		<dependency>
+			<groupId>org.beginningee6.book</groupId>
+			<artifactId>beginningee6-chapter10-ejb</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>ejb</type>
+		</dependency>
+	</dependencies>
+
+</project>
